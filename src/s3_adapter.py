@@ -47,3 +47,24 @@ class S3Adapter:
             logger.info('Bucket has been successfully created [bucket_name=%s]', bucket_name)
         except Exception as exp:
             logger.error('Failed to create bucket on S3')
+
+    def delete_s3_objects_from_bucket(self, bucket_name: str, objects: list[str]):
+        response = self.s3_client.delete_objects(
+            Bucket=bucket_name,
+            Delete={
+                'Objects': self.__map_to_objects(objects),
+                'Quiet': True
+            },
+            RequestPayer='requester',
+            BypassGovernanceRetention=True
+        )
+
+    def __map_to_objects(self, objects: list[str]):
+        listOfDicts = []
+        for a in objects:
+            listOfDicts.append(
+                {
+                    'Key': a
+                }
+            )
+        return listOfDicts
