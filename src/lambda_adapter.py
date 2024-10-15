@@ -1,8 +1,7 @@
 import logging
-
+import hashlib
 import boto3
 
-from src.sys_utils import setup_basic_logger
 
 logger = logging.getLogger("main")
 
@@ -12,15 +11,20 @@ class LambdaAdapter:
     def __init__(self):
         self.lambda_client = boto3.client('lambda')
 
-    def grant_permission(self, lambda_arn: str, statement_id: str, actiom_name: str, principal: str, source_arn: str):
-        response = self.lambda_client.add_permission(
-            FunctionName=lambda_arn,
-            StatementId='string',
-            Action='string',
-            Principal='string',
-            SourceArn='string',
-            FunctionUrlAuthType='NONE'
-        )
+    def grant_permission(self, lambda_name: str, statement_id: str, region: str, account_id: str, gateway_api_id: str, http_method: str, endpoint: str):
+
+        short_hash = hashlib.shake_256(statement_id.encode()).hexdigest(5)
+        try:
+            self.lambda_client.add_permission(
+                FunctionName=lambda_name,
+                StatementId=statement_id+'-'+short_hash,
+                Action='lambda:InvokeFunction',
+                Principal='apigateway.amazonaws.com',
+                SourceArn=f'arn:aws:execute-api:{region}:{account_id}:{gateway_api_id}/*/{http_method}/{endpoint}'
+            )
+        except Exception as exp:
+            logger.error("Could not attach permissions to function")
+            logger.error(exp)
 
     def create_lambda_function(
         self,
@@ -55,18 +59,10 @@ class LambdaAdapter:
             logger.error('Could not create new function [function_name=%s]', function_name)
 
     def delete_function(self, function_name: str):
-        response = self.lambda_client.delete_function(
-            FunctionName=function_name
-        )
-
-
-if __name__ == '__main__':
-    setup_basic_logger()
-    lambda_adapter = LambdaAdapter()
-    lambda_adapter.create_lambda_function(
-        'testing',
-        'arn:aws:iam::927409320646:role/lambda-execution-manual',
-        'start_ec2_instance_lambda.lambda_handler',
-        'robertjankowski-test-test-3',
-        'test-key'
-    )
+        try:
+            self.lambda_client.delete_function(
+                FunctionName=function_name
+            )
+        except Exception as exp:
+            logger.error('Cannot remove function [function_name=%s]', function_name)
+            logger.error(exp)
