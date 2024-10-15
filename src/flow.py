@@ -26,7 +26,7 @@ def upload_lambdas_to_s3_bucket(
         adapter.upload_file_to_s3(lambdas_zip_path, lambda_functions_bucket_name, lambdas_file_s3_object_key)
 
 
-def executeFlow():
+def execute_flow():
 
     zip_and_push_function(zipped_file='start_ec2',
                           handler='start_ec2_instance_lambda.lambda_handler',
@@ -41,16 +41,16 @@ def zip_and_push_function(zipped_file,
                           function_name):
     bucket_name = 'robertjankowski-py-lambdas'
     key_name = 'files'
-    if (create_lambdas_file_zip('./lambdas/' + zipped_file, zipped_file, 'zip')):
+    if (create_lambdas_file_zip('lambdas/' + zipped_file, zipped_file, 'zip')):
         upload_lambdas_to_s3_bucket(
             lambda_functions_bucket_name=bucket_name,
-            lambdas_zip_path=zipped_file,
-            lambdas_file_s3_object_key=key_name,
+            lambdas_zip_path='./'+zipped_file+'.zip',
+            lambdas_file_s3_object_key=zipped_file,
         )
         lambda_adapter.create_lambda_function(
             function_name,
             'arn:aws:iam::927409320646:role/lambda-execution-manual',
             handler,
             bucket_name,
-            key_name
+            zipped_file
         )
