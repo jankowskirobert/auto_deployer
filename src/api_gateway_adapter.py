@@ -52,7 +52,7 @@ class ApiGatewayAdapter:
                 restApiId=rest_api_id,
                 resourceId=resource_id,
                 httpMethod=http_method,
-                statusCode=200,
+                statusCode='200',
                 responseModels={
                     'application/json': 'Empty'
                 }
@@ -75,12 +75,20 @@ class ApiGatewayAdapter:
                 resourceId=resource_id,
                 httpMethod=http_method,
                 type='AWS',
+                #check with PROXY
                 integrationHttpMethod='POST',
                 uri=lambda_arn,
                 timeoutInMillis=60,
                 passthroughBehavior='WHEN_NO_TEMPLATES'
             )
             logger.info("Integration with lambda successfully created")
+            self.api_gateway_client.put_integration_response(
+                restApiId=rest_api_id,
+                resourceId=resource_id,
+                httpMethod=http_method,
+                statusCode='200',
+                responseTemplate={'application/json': ''}
+            )
         except Exception as exp:
             logger.error("Could not create integration with lambda for Method in API")
             logger.error(exp)
