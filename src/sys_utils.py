@@ -1,3 +1,4 @@
+import configparser
 import logging
 import sys
 
@@ -16,3 +17,8 @@ def setup_basic_logger():
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger_root.addHandler(file_handler)
+
+def load_config() -> dict:
+    cfg = configparser.RawConfigParser()
+    cfg.read('app.cfg')
+    return dict(cfg.items("Settings"))
