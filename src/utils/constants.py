@@ -40,7 +40,7 @@ EC2_STOP_POST_REQUEST_MODEL = {
         }
     }
 }
-EC2_DELETE_DELETE_REQUEST_MODEL = {
+EC2_DELETE_POST_REQUEST_MODEL = {
     "$schema": "http://json-schema.org/draft-04/schema#",
     "title": 'EC2 start',
     "type": "object",

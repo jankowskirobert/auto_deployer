@@ -1,11 +1,11 @@
 import requests
 
-stage = 'boben1'
-api_id = 'ra2eu5ljhf'
+stage = 'your-stage-root-base-path'
+api_id = 'your-api-id'
 
 
 def create():
-    response = requests.post(f'https://{api_id}.execute-api.eu-west-1.amazonaws.com/{stage}/create-ec2', json={'instanceName': 'b41', 'instanceType': 't1.nano', 'keyPairName': 'testing3', 'imageId': 'ami-00385a401487aefa4'})
+    response = requests.post(f'https://{api_id}.execute-api.eu-west-1.amazonaws.com/{stage}/create-ec2', json={'instanceName': 'test', 'instanceType': 't1.micro', 'keyPairName': 'testing13', 'imageId': 'ami-00385a401487aefa4'})
     print(response)
     print(response.text)
     return response.json()['instanceId']

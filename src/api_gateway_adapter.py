@@ -1,6 +1,5 @@
 import json
 import logging
-import time
 
 import boto3
 from botocore.config import Config

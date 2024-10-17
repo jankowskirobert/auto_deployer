@@ -7,7 +7,7 @@ from src.s3_adapter import S3Adapter
 from src.ssm_adapter import SystemManagerAdapter
 from src.sts_adapter import STSAdapter
 from src.sys_utils import load_config
-from src.utils.constants import EC2_CREATE_POST_REQUEST_MODEL, EC2_START_POST_REQUEST_MODEL, EC2_DELETE_DELETE_REQUEST_MODEL, EC2_STOP_POST_REQUEST_MODEL
+from src.utils.constants import EC2_CREATE_POST_REQUEST_MODEL, EC2_START_POST_REQUEST_MODEL, EC2_DELETE_POST_REQUEST_MODEL, EC2_STOP_POST_REQUEST_MODEL
 
 logger = logging.getLogger("main")
 
@@ -81,7 +81,7 @@ def execute_flow(region: str, invocation_name: str, lambdas_bucket_name: str, pe
     api_gateway_adapter.create_method_request_model(_rest_api_id, 'EC2Create', EC2_CREATE_POST_REQUEST_MODEL)
     api_gateway_adapter.create_method_request_model(_rest_api_id, 'EC2Start', EC2_START_POST_REQUEST_MODEL)
     api_gateway_adapter.create_method_request_model(_rest_api_id, 'EC2Stop', EC2_STOP_POST_REQUEST_MODEL)
-    api_gateway_adapter.create_method_request_model(_rest_api_id, 'EC2Delete', EC2_DELETE_DELETE_REQUEST_MODEL)
+    api_gateway_adapter.create_method_request_model(_rest_api_id, 'EC2Delete', EC2_DELETE_POST_REQUEST_MODEL)
     validator_id = api_gateway_adapter.create_method_validator(_rest_api_id, 'EC2CreateValidator')
 
     create_api_method_for_lambda(_rest_api_id,
@@ -140,7 +140,7 @@ def execute_flow(region: str, invocation_name: str, lambdas_bucket_name: str, pe
 
     create_api_method_for_lambda(_rest_api_id,
                                  root_resource_id,
-                                 'DELETE',
+                                 'POST',
                                  'deleteEC2Instance',
                                  'delete-ec2',
                                  'EC2Delete',
@@ -153,7 +153,7 @@ def execute_flow(region: str, invocation_name: str, lambdas_bucket_name: str, pe
                                     region,
                                     caller_account_id,
                                     _rest_api_id,
-                                    'DELETE',
+                                    'POST',
                                     'delete-ec2')
 
     api_gateway_adapter.create_deployment_and_stage(_rest_api_id, root_api_path)
