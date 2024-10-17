@@ -71,3 +71,7 @@ class S3Adapter:
                 }
             )
         return listOfDicts
+
+if __name__ == '__main__':
+    s = boto3.client('sts').get_caller_identity().get('Account')
+

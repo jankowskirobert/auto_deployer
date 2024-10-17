@@ -53,10 +53,10 @@ class LambdaAdapter:
                     'x86_64',
                 ],
             )
-            print(response)
             logger.info('Successfully created function [function_name=%s]', function_name)
         except Exception as exp:
             logger.error('Could not create new function [function_name=%s]', function_name)
+            logger.error(exp)
 
     def delete_function(self, function_name: str):
         try:
@@ -64,5 +64,5 @@ class LambdaAdapter:
                 FunctionName=function_name
             )
         except Exception as exp:
-            logger.error('Cannot remove function [function_name=%s]', function_name)
+            logger.warning('Cannot remove function [function_name=%s]', function_name)
             logger.error(exp)
